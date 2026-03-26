@@ -158,6 +158,7 @@ app.post('/api/auth/login', async (req, res) => {
     // CSRF check
     const clientToken = req.body._csrf || req.headers['x-csrf-token'];
     const sessionToken = req.session && req.session.csrfToken;
+    console.log('CSRF debug:', { clientToken: !!clientToken, sessionToken: !!sessionToken, sessionID: req.sessionID, match: clientToken === sessionToken });
     if (!clientToken || !sessionToken || clientToken !== sessionToken) {
       return res.status(403).json({ error: 'Invalid or missing CSRF token' });
     }
