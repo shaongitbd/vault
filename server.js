@@ -68,7 +68,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: false,
+    sameSite: 'lax',
+    secure: process.env.TRUST_PROXY === 'true' || false,
     maxAge: 30 * 60 * 1000
   }
 }));
@@ -748,16 +749,23 @@ function getOrCreateCert() {
 }
 
 let server;
-const tlsCert = getOrCreateCert();
+const forceHttp = process.env.FORCE_HTTP === 'true' || process.env.TRUST_PROXY === 'true';
 
-if (tlsCert) {
-  server = https.createServer(tlsCert, app).listen(PORT, () => {
-    console.log(`Vault server running on https://localhost:${PORT}`);
-  });
+if (!forceHttp) {
+  const tlsCert = getOrCreateCert();
+  if (tlsCert) {
+    server = https.createServer(tlsCert, app).listen(PORT, () => {
+      console.log(`Vault server running on https://localhost:${PORT}`);
+    });
+  } else {
+    server = app.listen(PORT, () => {
+      console.log(`Vault server running on http://localhost:${PORT}`);
+    });
+  }
 } else {
-  console.log('Could not create TLS cert, falling back to HTTP');
-  server = app.listen(PORT, () => {
-    console.log(`Vault server running on http://localhost:${PORT}`);
+  // Behind reverse proxy (Coolify, nginx, etc.) — proxy handles SSL
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Vault server running on http://0.0.0.0:${PORT} (behind proxy)`);
   });
 }
 
