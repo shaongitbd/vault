@@ -12,8 +12,8 @@
   --border: #e0deda;
   --border-strong: #ccc9c3;
   --text: #1c1c1a;
-  --text-secondary: #6b6b66;
-  --text-tertiary: #9b9b95;
+  --text-secondary: #5c5c57;
+  --text-tertiary: #87877f;
   --accent: #0d7377;
   --accent-hover: #0a5c5f;
   --accent-subtle: #e8f4f4;
@@ -48,7 +48,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   overflow: hidden;
   height: 100vh;
