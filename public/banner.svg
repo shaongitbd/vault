@@ -1,36 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" fill="none">
-  <rect width="1200" height="300" fill="#0c1618"/>
-  <!-- Subtle grid -->
-  <g opacity="0.035" stroke="#4ea8ab" stroke-width="0.5">
-    <line x1="0" y1="50" x2="1200" y2="50"/><line x1="0" y1="100" x2="1200" y2="100"/>
-    <line x1="0" y1="150" x2="1200" y2="150"/><line x1="0" y1="200" x2="1200" y2="200"/>
-    <line x1="0" y1="250" x2="1200" y2="250"/>
-    <line x1="100" y1="0" x2="100" y2="300"/><line x1="200" y1="0" x2="200" y2="300"/>
-    <line x1="300" y1="0" x2="300" y2="300"/><line x1="400" y1="0" x2="400" y2="300"/>
-    <line x1="500" y1="0" x2="500" y2="300"/><line x1="600" y1="0" x2="600" y2="300"/>
-    <line x1="700" y1="0" x2="700" y2="300"/><line x1="800" y1="0" x2="800" y2="300"/>
-    <line x1="900" y1="0" x2="900" y2="300"/><line x1="1000" y1="0" x2="1000" y2="300"/>
-    <line x1="1100" y1="0" x2="1100" y2="300"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none">
+  <!-- Deep dark background -->
+  <rect width="1200" height="400" fill="#080f10"/>
+
+  <!-- Animated scan lines -->
+  <g opacity="0.02">
+    <rect y="0" width="1200" height="1" fill="#0d7377"><animate attributeName="y" from="0" to="400" dur="8s" repeatCount="indefinite"/></rect>
+    <rect y="0" width="1200" height="1" fill="#0d7377"><animate attributeName="y" from="0" to="400" dur="8s" begin="2s" repeatCount="indefinite"/></rect>
+    <rect y="0" width="1200" height="1" fill="#0d7377"><animate attributeName="y" from="0" to="400" dur="8s" begin="4s" repeatCount="indefinite"/></rect>
+    <rect y="0" width="1200" height="1" fill="#0d7377"><animate attributeName="y" from="0" to="400" dur="8s" begin="6s" repeatCount="indefinite"/></rect>
   </g>
-  <!-- Large shield icon (centered, paths only) -->
-  <g transform="translate(540, 30) scale(1.2)" fill="#0d7377" opacity="0.85">
-    <path d="M50 0L0 10C0 10 0 50 0 65C0 100 22 132 50 145C78 132 100 100 100 65C100 50 100 10 100 10L50 0ZM50 75V15L90 23V65C90 92 74 117 50 130V75Z"/>
+
+  <!-- Grid with animated opacity pulse -->
+  <g stroke="#0d7377" stroke-width="0.5">
+    <g opacity="0.04">
+      <line x1="0" y1="50" x2="1200" y2="50"/><line x1="0" y1="100" x2="1200" y2="100"/>
+      <line x1="0" y1="150" x2="1200" y2="150"/><line x1="0" y1="200" x2="1200" y2="200"/>
+      <line x1="0" y1="250" x2="1200" y2="250"/><line x1="0" y1="300" x2="1200" y2="300"/>
+      <line x1="0" y1="350" x2="1200" y2="350"/>
+    </g>
+    <g opacity="0.04">
+      <line x1="100" y1="0" x2="100" y2="400"/><line x1="200" y1="0" x2="200" y2="400"/>
+      <line x1="300" y1="0" x2="300" y2="400"/><line x1="400" y1="0" x2="400" y2="400"/>
+      <line x1="500" y1="0" x2="500" y2="400"/><line x1="600" y1="0" x2="600" y2="400"/>
+      <line x1="700" y1="0" x2="700" y2="400"/><line x1="800" y1="0" x2="800" y2="400"/>
+      <line x1="900" y1="0" x2="900" y2="400"/><line x1="1000" y1="0" x2="1000" y2="400"/>
+      <line x1="1100" y1="0" x2="1100" y2="400"/>
+    </g>
   </g>
-  <!-- "VAULT" spelled with geometric path letters -->
-  <g transform="translate(310, 205)" fill="#e0eeef">
+
+  <!-- Glowing orb behind shield -->
+  <circle cx="600" cy="130" r="90" fill="#0d7377" opacity="0.06">
+    <animate attributeName="r" values="85;95;85" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.05;0.09;0.05" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="600" cy="130" r="60" fill="#0d7377" opacity="0.04">
+    <animate attributeName="r" values="55;65;55" dur="4s" begin="0.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Shield icon — large, centered -->
+  <g transform="translate(545, 65) scale(1.1)">
+    <path d="M50 0L0 12V60C0 95 21 127 50 140C79 127 100 95 100 60V12L50 0Z" fill="none" stroke="#14a3a8" stroke-width="2.5" opacity="0.8"/>
+    <path d="M50 10L8 20V60C8 90 26 118 50 130C74 118 92 90 92 60V20L50 10Z" fill="none" stroke="#0d7377" stroke-width="1" opacity="0.3"/>
+    <path d="M50 130V72H90V60C90 90 74 118 50 130Z" fill="#0d7377" opacity="0.25"/>
+    <!-- Lock icon inside shield -->
+    <rect x="38" y="52" width="24" height="20" rx="3" fill="none" stroke="#14a3a8" stroke-width="2" opacity="0.9"/>
+    <path d="M43 52V44C43 38 46 35 50 35C54 35 57 38 57 44V52" fill="none" stroke="#14a3a8" stroke-width="2" opacity="0.9"/>
+    <circle cx="50" cy="63" r="3" fill="#14a3a8" opacity="0.9"/>
+    <line x1="50" y1="66" x2="50" y2="69" stroke="#14a3a8" stroke-width="2" opacity="0.9"/>
+  </g>
+
+  <!-- VAULT — geometric path letters, large -->
+  <g transform="translate(282, 240)" fill="#d8eced">
     <!-- V -->
-    <path d="M0 0L22 0L40 55L58 0L80 0L52 75L28 75Z"/>
+    <path d="M0 0L28 0L52 72L76 0L104 0L67 95L37 95Z"/>
     <!-- A -->
-    <path d="M95 75L117 0L143 0L165 75L143 75L138 58L122 58L117 75ZM126 42L134 42L130 25Z"/>
+    <path d="M125 95L152 0L185 0L212 95L186 95L180 74L157 74L151 95ZM162 55L175 55L168.5 28Z"/>
     <!-- U -->
-    <path d="M180 0L200 0L200 50C200 63 207 68 215 68C223 68 230 63 230 50L230 0L250 0L250 52C250 72 236 82 215 82C194 82 180 72 180 52Z"/>
+    <path d="M230 0L256 0L256 62C256 78 265 85 276 85C287 85 296 78 296 62L296 0L322 0L322 65C322 90 304 103 276 103C248 103 230 90 230 65Z"/>
     <!-- L -->
-    <path d="M265 0L285 0L285 58L325 58L325 75L265 75Z"/>
+    <path d="M345 0L371 0L371 73L420 73L420 95L345 95Z"/>
     <!-- T -->
-    <path d="M340 0L410 0L410 17L385 17L385 75L365 75L365 17L340 17Z"/>
+    <path d="M435 0L525 0L525 22L493 22L493 95L467 95L467 22L435 22Z"/>
   </g>
-  <!-- Accent line -->
-  <rect x="420" y="195" width="360" height="1.5" fill="#0d7377" opacity="0.5"/>
-  <!-- Bottom border -->
-  <rect x="0" y="297" width="1200" height="3" fill="#0d7377" opacity="0.7"/>
+
+  <!-- Tagline below -->
+  <g transform="translate(365, 355)" fill="#4d8a8c" opacity="0.8">
+    <!-- E -->
+    <path d="M0 0L3 0L3 3L1 3L1 5L3 5L3 8L1 8L1 10L3 10L3 13L0 13Z" transform="scale(1.4)"/>
+    <!-- N -->
+    <path d="M6 0L8 0L11 8L11 0L13 0L13 13L11 13L8 5L8 13L6 13Z" transform="scale(1.4)"/>
+    <!-- C -->
+    <path d="M16 3L16 0L22 0L22 3L18 3L18 10L22 10L22 13L16 13Z" transform="scale(1.4)"/>
+    <!-- R -->
+    <path d="M25 0L30 0C32 0 33 2 33 4C33 6 32 7 30 7L33 13L31 13L28 7L27 7L27 13L25 13ZM27 2L27 5L30 5C31 5 31 4 31 4C31 3 31 2 30 2Z" transform="scale(1.4)"/>
+    <!-- Y -->
+    <path d="M36 0L38 0L40 5L42 0L44 0L41 8L41 13L39 13L39 8Z" transform="scale(1.4)"/>
+    <!-- P -->
+    <path d="M47 0L52 0C54 0 55 2 55 4C55 6 54 8 52 8L49 8L49 13L47 13ZM49 2L49 6L52 6C53 6 53 5 53 4C53 3 53 2 52 2Z" transform="scale(1.4)"/>
+    <!-- T -->
+    <path d="M58 0L65 0L65 2L63 2L63 13L61 13L61 2L58 2Z" transform="scale(1.4)"/>
+    <!-- E -->
+    <path d="M68 0L71 0L71 3L69 3L69 5L71 5L71 8L69 8L69 10L71 10L71 13L68 13Z" transform="scale(1.4)"/>
+    <!-- D -->
+    <path d="M74 0L78 0C80 0 82 3 82 6.5C82 10 80 13 78 13L74 13ZM76 2L76 11L78 11C79 11 80 9 80 6.5C80 4 79 2 78 2Z" transform="scale(1.4)"/>
+    <!-- space + -->
+    <!-- D -->
+    <path d="M88 0L92 0C94 0 96 3 96 6.5C96 10 94 13 92 13L88 13ZM90 2L90 11L92 11C93 11 94 9 94 6.5C94 4 93 2 92 2Z" transform="scale(1.4)"/>
+    <!-- O -->
+    <path d="M99 0L104 0C106 0 107 3 107 6.5C107 10 106 13 104 13L99 13ZM101 2L101 11L104 11C105 11 105 9 105 6.5C105 4 105 2 104 2Z" transform="scale(1.4)"/>
+    <!-- C -->
+    <path d="M110 3L110 0L116 0L116 3L112 3L112 10L116 10L116 13L110 13Z" transform="scale(1.4)"/>
+    <!-- U -->
+    <path d="M119 0L121 0L121 10L125 10L125 0L127 0L127 10C127 12 124 13 123 13C122 13 119 12 119 10Z" transform="scale(1.4)"/>
+    <!-- M -->
+    <path d="M130 0L133 0L135 7L137 0L140 0L140 13L138 13L138 4L136 11L134 11L132 4L132 13L130 13Z" transform="scale(1.4)"/>
+    <!-- E -->
+    <path d="M143 0L146 0L146 3L144 3L144 5L146 5L146 8L144 8L144 10L146 10L146 13L143 13Z" transform="scale(1.4)"/>
+    <!-- N -->
+    <path d="M149 0L151 0L154 8L154 0L156 0L156 13L154 13L151 5L151 13L149 13Z" transform="scale(1.4)"/>
+    <!-- T -->
+    <path d="M159 0L166 0L166 2L164 2L164 13L162 13L162 2L159 2Z" transform="scale(1.4)"/>
+    <!-- space + -->
+    <!-- V -->
+    <path d="M172 0L174 0L177 10L180 0L182 0L178 13L176 13Z" transform="scale(1.4)"/>
+    <!-- A -->
+    <path d="M184 13L188 0L191 0L195 13L193 13L192 9L187 9L186 13ZM188 7L191 7L189.5 2Z" transform="scale(1.4)"/>
+    <!-- U -->
+    <path d="M198 0L200 0L200 10L204 10L204 0L206 0L206 10C206 12 203 13 202 13C201 13 198 12 198 10Z" transform="scale(1.4)"/>
+    <!-- L -->
+    <path d="M209 0L211 0L211 11L216 11L216 13L209 13Z" transform="scale(1.4)"/>
+    <!-- T -->
+    <path d="M219 0L226 0L226 2L224 2L224 13L222 13L222 2L219 2Z" transform="scale(1.4)"/>
+  </g>
+
+  <!-- Top accent bar -->
+  <rect x="0" y="0" width="1200" height="2" fill="#0d7377" opacity="0.6"/>
+  <!-- Bottom accent bar -->
+  <rect x="0" y="398" width="1200" height="2" fill="#0d7377" opacity="0.6"/>
 </svg>
