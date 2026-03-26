@@ -62,10 +62,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// Session secret: use env var or generate once and persist to disk
+function getSessionSecret() {
+  const secretPath = path.join(__dirname, 'data', '.session-secret');
+  try {
+    if (fs.existsSync(secretPath)) return fs.readFileSync(secretPath, 'utf8');
+  } catch {}
+  const secret = crypto.randomBytes(64).toString('hex');
+  try { fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true }); fs.writeFileSync(secretPath, secret); } catch {}
+  return secret;
+}
+
 app.use(session({
-  secret: crypto.randomBytes(64).toString('hex'),
+  secret: process.env.SESSION_SECRET || getSessionSecret(),
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Must be true so CSRF GET creates a session cookie
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
