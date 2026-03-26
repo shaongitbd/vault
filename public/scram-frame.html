@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #fff; height: 100vh; display: flex; flex-direction: column; }
+  #loading { display: flex; align-items: center; justify-content: center; height: 100%; color: #666; font-size: 14px; }
+  #loading.hidden { display: none; }
+  #error { display: none; align-items: center; justify-content: center; height: 100%; color: #c53030; font-size: 14px; text-align: center; padding: 20px; flex-direction: column; gap: 8px; }
+  #error.show { display: flex; }
+</style>
+</head>
+<body>
+<div id="loading">Initializing secure proxy...</div>
+<div id="error">
+  <strong>Proxy initialization failed</strong>
+  <p id="error-msg"></p>
+</div>
+
+<script src="/scram/scramjet.codecs.js"></script>
+<script src="/scram/scramjet.config.js"></script>
+<script>
+  // Configure Scramjet
+  self.__scramjet$config = {
+    prefix: "/scram/service/",
+    files: {
+      wasm: "/scram/scramjet.wasm.js",
+      worker: "/scram/scramjet.worker.js",
+      client: "/scram/scramjet.client.js",
+      shared: "/scram/scramjet.shared.js",
+      sync: "/scram/scramjet.sync.js",
+    },
+    codec: self.__scramjet$codecs.plain,
+  };
+</script>
+<script src="/scram/scramjet.bundle.js"></script>
+<script src="/baremux/index.js"></script>
+
+<script>
+(async function() {
+  const loadingEl = document.getElementById('loading');
+  const errorEl = document.getElementById('error');
+  const errorMsg = document.getElementById('error-msg');
+
+  try {
+    // Register Scramjet service worker
+    const reg = await navigator.serviceWorker.register("/scram/scramjet.worker.js", {
+      scope: "/scram/service/",
+    });
+
+    // Wait for the service worker to be ready
+    await navigator.serviceWorker.ready;
+
+    // Set up BareMux connection with WISP transport
+    const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
+    const wispUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/wisp/';
+
+    // Try to set transport
+    await conn.setTransport("/libcurl/index.mjs", [{ wisp: wispUrl }]);
+
+    loadingEl.textContent = 'Proxy ready';
+    loadingEl.classList.add('hidden');
+
+    // Listen for navigation commands from parent
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'navigate' && e.data.url) {
+        const encoded = self.__scramjet$config.codec.encode(e.data.url);
+        location.href = self.__scramjet$config.prefix + encoded;
+      }
+    });
+
+    // Notify parent that proxy is ready
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'proxy-ready' }, '*');
+    }
+
+    // Check if there's a URL to navigate to from hash
+    if (location.hash && location.hash.length > 1) {
+      const url = decodeURIComponent(location.hash.slice(1));
+      const encoded = self.__scramjet$config.codec.encode(url);
+      location.href = self.__scramjet$config.prefix + encoded;
+    }
+
+  } catch (err) {
+    console.error('Scramjet init error:', err);
+    loadingEl.classList.add('hidden');
+    errorEl.classList.add('show');
+    errorMsg.textContent = err.message;
+
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'proxy-error', error: err.message }, '*');
+    }
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(timeout 8 node server.js)",
+      "Bash(node -e \":*)",
+      "Bash(rm -f \"J:/p/Projects/PDFreader/data/.salt\")",
+      "Bash(pkill -f \"node server.js\")",
+      "Bash(netstat -ano)",
+      "Bash(taskkill:*)",
+      "Bash(rm -rf \"J:/p/Projects/PDFreader/data/\"*)",
+      "Bash(mkdir -p \"J:/p/Projects/PDFreader/data\")",
+      "Bash(node -c public/js/app.js)",
+      "Bash(node -c public/js/pdf-viewer.js)",
+      "Bash(node -c server.js)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(node -e \"const Unblocker = require\\(''unblocker''\\); const u = new Unblocker\\({prefix:''/browse/''}\\); console.log\\(''Unblocker loaded OK, prefix:'', u.prefix\\);\")",
+      "Bash(node -e \"const Unblocker = require\\(''unblocker''\\); const u = new Unblocker\\({prefix:''/browse/''}\\); console.log\\(typeof u, typeof u.onUpgrade\\);\")",
+      "Bash(curl -s -b /tmp/vc.txt -L \"http://localhost:3000/browse/https://example.com\")",
+      "Bash(openssl version:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.titaniumnetwork.org)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(node:*)",
+      "Bash(grep -o '__scramjet\\\\$[a-zA-Z]*' \"J:/p/Projects/PDFreader/node_modules/@mercuryworkshop/scramjet/dist/scramjet.bundle.js\")"
+    ]
+  }
+}
