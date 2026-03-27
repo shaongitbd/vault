@@ -37,7 +37,7 @@ if (ALLOWED_IPS) {
       || req.connection.remoteAddress;
     const normalized = realIp.replace(/^::ffff:/, '');
 
-    console.log('IP check:', { realIp, normalized, forwarded, allowed: ALLOWED_IPS });
+    console.log('IP check:', { realIp, normalized, allowed: ALLOWED_IPS });
 
     if (ALLOWED_IPS.includes(normalized) || ALLOWED_IPS.includes(realIp)) {
       return next();
