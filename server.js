@@ -22,17 +22,24 @@ const ALLOWED_IPS = process.env.ALLOWED_IPS
 // Middleware
 // ---------------------------------------------------------------------------
 
+// Always trust proxy when behind reverse proxy (Coolify, nginx, etc.)
+if (process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', true);
+}
+
 // IP allowlist — blocks everything if ALLOWED_IPS is set
 if (ALLOWED_IPS) {
-  app.set('trust proxy', process.env.TRUST_PROXY === 'true');
   app.use((req, res, next) => {
-    const clientIp = req.ip || req.connection.remoteAddress;
-    // Normalize IPv6-mapped IPv4 (::ffff:127.0.0.1 → 127.0.0.1)
-    const normalized = clientIp.replace(/^::ffff:/, '');
-    if (ALLOWED_IPS.includes(normalized) || ALLOWED_IPS.includes(clientIp)) {
+    // Get real IP: trust proxy header, or fall back to direct connection
+    const forwarded = req.headers['x-forwarded-for'];
+    const realIp = forwarded ? forwarded.split(',')[0].trim() : (req.ip || req.connection.remoteAddress);
+    const normalized = realIp.replace(/^::ffff:/, '');
+
+    console.log('IP check:', { realIp, normalized, forwarded, allowed: ALLOWED_IPS });
+
+    if (ALLOWED_IPS.includes(normalized) || ALLOWED_IPS.includes(realIp)) {
       return next();
     }
-    // Return nothing useful — don't even reveal it's a vault
     res.status(403).end();
   });
 }
@@ -94,15 +101,8 @@ const upload = multer({
 });
 
 // ---------------------------------------------------------------------------
-// CSRF + Rate Limiting for login
+// Rate Limiting for login
 // ---------------------------------------------------------------------------
-
-// CSRF: server generates a token per session, client must send it back
-app.get('/api/auth/csrf', (req, res) => {
-  const token = crypto.randomBytes(32).toString('hex');
-  req.session.csrfToken = token;
-  res.json({ token });
-});
 
 // Rate limiter: per-IP, max 5 attempts per 60 seconds
 const loginAttempts = new Map(); // ip → { count, resetAt }
@@ -154,16 +154,6 @@ app.post('/api/auth/login', async (req, res) => {
         error: `Too many attempts. Try again in ${rateCheck.waitSec} seconds.`
       });
     }
-
-    // CSRF check
-    const clientToken = req.body._csrf || req.headers['x-csrf-token'];
-    const sessionToken = req.session && req.session.csrfToken;
-    console.log('CSRF debug:', { clientToken: !!clientToken, sessionToken: !!sessionToken, sessionID: req.sessionID, match: clientToken === sessionToken });
-    if (!clientToken || !sessionToken || clientToken !== sessionToken) {
-      return res.status(403).json({ error: 'Invalid or missing CSRF token' });
-    }
-    // Invalidate used token
-    delete req.session.csrfToken;
 
     const { password } = req.body;
     if (!password) {

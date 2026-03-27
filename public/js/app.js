@@ -296,12 +296,7 @@
       const errEl = $('login-error');
       errEl.textContent = '';
       try {
-        // Fetch CSRF token first
-        const csrf = await api.get('/api/auth/csrf');
-        const data = await api.post('/api/auth/login', {
-          password: pw,
-          _csrf: csrf.token,
-        });
+        const data = await api.post('/api/auth/login', { password: pw });
         if (data.success) {
           showAppScreen();
           loadCurrentFolder();
