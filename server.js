@@ -263,6 +263,49 @@ app.post('/api/files/upload', upload.array('files', 20), async (req, res) => {
   }
 });
 
+// Download file from URL and save to vault
+app.post('/api/files/download-url', async (req, res) => {
+  try {
+    const { url, folderId } = req.body;
+    if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+      return res.status(400).json({ error: 'Invalid URL' });
+    }
+
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+      redirect: 'follow',
+    });
+
+    if (!response.ok) {
+      return res.status(400).json({ error: 'Failed to download: ' + response.statusText });
+    }
+
+    const contentType = response.headers.get('content-type') || 'application/octet-stream';
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    // Extract filename from URL or Content-Disposition header
+    let fileName = 'download';
+    const disposition = response.headers.get('content-disposition');
+    if (disposition) {
+      const match = disposition.match(/filename[^;=\n]*=["']?([^"';\n]+)/i);
+      if (match) fileName = match[1];
+    } else {
+      try {
+        const urlPath = new URL(url).pathname;
+        const lastSegment = urlPath.split('/').filter(Boolean).pop();
+        if (lastSegment && lastSegment.includes('.')) fileName = decodeURIComponent(lastSegment);
+      } catch {}
+    }
+
+    const mimeType = mime.lookup(fileName) || contentType.split(';')[0].trim();
+    const created = req.vault.addFile(fileName, mimeType, buffer.length, folderId || null, buffer);
+    res.json({ success: true, file: created });
+  } catch (err) {
+    console.error('Download URL error:', err);
+    res.status(500).json({ error: 'Failed to download: ' + err.message });
+  }
+});
+
 app.get('/api/files/:id/view', async (req, res) => {
   try {
     const file = await req.vault.getFile(req.params.id);

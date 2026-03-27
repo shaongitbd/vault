@@ -473,6 +473,10 @@ input:focus-visible, textarea:focus-visible {
 
 .file-item:hover { background: var(--bg-hover); }
 .file-item.selected { background: var(--accent-subtle); }
+.file-item.dragging { opacity: .4; }
+.file-item.drop-target { outline: 2px dashed var(--accent); outline-offset: -2px; background: var(--accent-subtle); }
+.file-item[draggable="true"] { cursor: grab; }
+.file-item[draggable="true"]:active { cursor: grabbing; }
 
 /* Grid mode items */
 .grid-view .file-item {

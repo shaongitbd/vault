@@ -464,6 +464,7 @@
     el.className = 'file-item folder-item';
     el.dataset.id = folder.id;
     el.dataset.type = 'folder';
+    el.draggable = true;
 
     if (state.viewMode === 'grid') {
       el.innerHTML =
@@ -483,6 +484,42 @@
     el.addEventListener('dblclick', () => navigateToFolder(folder.id));
     el.addEventListener('contextmenu', (e) => showContextMenu(e, folder, 'folder'));
 
+    // Drag: this folder can be dragged
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'folder', id: folder.id }));
+      e.dataTransfer.effectAllowed = 'move';
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+
+    // Drop: accept files/folders dropped onto this folder
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      el.classList.add('drop-target');
+    });
+    el.addEventListener('dragleave', () => el.classList.remove('drop-target'));
+    el.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.classList.remove('drop-target');
+      try {
+        const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+        if (data.id === folder.id) return; // Can't drop on itself
+        if (data.type === 'file') {
+          await api.put('/api/files/' + data.id + '/move', { folderId: folder.id });
+          showToast('Moved to ' + folder.name, 'success');
+        } else if (data.type === 'folder') {
+          await api.put('/api/folders/' + data.id, { parentId: folder.id });
+          showToast('Moved to ' + folder.name, 'success');
+        }
+        loadCurrentFolder();
+        loadFolderTree();
+      } catch (err) {
+        showToast('Move failed: ' + err.message, 'error');
+      }
+    });
+
     return el;
   }
 
@@ -491,6 +528,7 @@
     el.className = 'file-item';
     el.dataset.id = file.id;
     el.dataset.type = 'file';
+    el.draggable = true;
 
     const icon = getFileIcon(file.mime_type);
     const progressBadge = file.lastPage ? '<span class="progress-badge">p.' + file.lastPage + '</span>' : '';
@@ -513,6 +551,14 @@
     el.addEventListener('click', (e) => handleItemClick(e, file.id, 'file'));
     el.addEventListener('dblclick', () => openFile(file));
     el.addEventListener('contextmenu', (e) => showContextMenu(e, file, 'file'));
+
+    // Drag: this file can be dragged
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'file', id: file.id }));
+      e.dataTransfer.effectAllowed = 'move';
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
 
     return el;
   }
@@ -893,6 +939,22 @@
       loadCurrentFolder();
     } catch (err) {
       showToast('Upload failed: ' + err.message, 'error');
+    }
+  }
+
+  async function downloadFromUrl() {
+    const url = await showPrompt('Download from URL', '');
+    if (!url) return;
+    showToast('Downloading...', 'info', 10000);
+    try {
+      const data = await api.post('/api/files/download-url', {
+        url: url,
+        folderId: state.currentFolder,
+      });
+      showToast('Downloaded: ' + (data.file ? data.file.name : 'file'), 'success');
+      loadCurrentFolder();
+    } catch (err) {
+      showToast('Download failed: ' + err.message, 'error');
     }
   }
 
@@ -3370,6 +3432,7 @@
 
     // New folder button
     $('new-folder-btn')?.addEventListener('click', createNewFolder);
+    $('download-url-btn')?.addEventListener('click', downloadFromUrl);
 
     // New note buttons
     $('new-note-btn')?.addEventListener('click', createNewNote);
