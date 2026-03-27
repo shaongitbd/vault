@@ -30,9 +30,11 @@ if (process.env.TRUST_PROXY === 'true') {
 // IP allowlist — blocks everything if ALLOWED_IPS is set
 if (ALLOWED_IPS) {
   app.use((req, res, next) => {
-    // Get real IP: trust proxy header, or fall back to direct connection
-    const forwarded = req.headers['x-forwarded-for'];
-    const realIp = forwarded ? forwarded.split(',')[0].trim() : (req.ip || req.connection.remoteAddress);
+    // Get real IP: Cloudflare → X-Forwarded-For → direct connection
+    const realIp = req.headers['cf-connecting-ip']
+      || (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : null)
+      || req.ip
+      || req.connection.remoteAddress;
     const normalized = realIp.replace(/^::ffff:/, '');
 
     console.log('IP check:', { realIp, normalized, forwarded, allowed: ALLOWED_IPS });
